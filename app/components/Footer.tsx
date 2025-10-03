@@ -11,10 +11,7 @@ const Footer = () => {
             <h3 className="text-2xl font-bold mb-4">{CONTACT_INFO.agencyName}</h3>
             <p className="text-gray-400 mb-4">Your trusted partner for social media growth.</p>
             <div className="flex flex-col gap-2">
-              <a href={`tel:${CONTACT_INFO.phone}`} className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors justify-center md:justify-start">
-                <Phone className="w-4 h-4" />
-                {CONTACT_INFO.phone}
-              </a>
+              
               <a href={CONTACT_INFO.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors justify-center md:justify-start">
                 <Instagram className="w-4 h-4" />
                 @growwmoree.agency
