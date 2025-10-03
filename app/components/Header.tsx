@@ -14,10 +14,7 @@ const Header = () => {
             <p className="text-gray-600 text-sm">Your Social Media Growth Partner</p>
           </div>
           <div className="flex flex-wrap gap-3 justify-center">
-            <a href={`tel:${CONTACT_INFO.phone}`} className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full font-semibold transition-all shadow-md hover:shadow-lg">
-              <Phone className="w-4 h-4" />
-              <span className="text-sm">{CONTACT_INFO.phone}</span>
-            </a>
+            
             <a href={CONTACT_INFO.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2 rounded-full font-semibold transition-all shadow-md hover:shadow-lg">
               <Instagram className="w-4 h-4" />
               <span className="text-sm">Follow Us</span>

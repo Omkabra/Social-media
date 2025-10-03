@@ -88,7 +88,21 @@ const GrowwMoreeeAgencyPage = () => {
     document.body.removeChild(textArea);
 
     
-    window.open(CONTACT_INFO.instagramDirectLink, "_blank");
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      
+      const appDeepLink = `instagram://user?username=growwmoree.agency`;
+      
+      window.location.href = appDeepLink;
+      
+      setTimeout(() => {
+        window.open('https://www.instagram.com/growwmoree.agency?igsh=MWh4ZWJsOXdxY2doMw==', "_blank");
+      }, 1500);
+    } else {
+      
+      window.open(CONTACT_INFO.instagramDirectLink, "_blank");
+    }
     
     
     setIsDialogOpen(false);
