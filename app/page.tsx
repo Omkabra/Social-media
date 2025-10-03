@@ -1,103 +1,186 @@
-import Image from "next/image";
+"use client";
+import React, { useState } from 'react';
+import { Zap } from 'lucide-react';
+import { services, CONTACT_INFO } from '@/app/data/services';
+import { Services, StandardService, BundleService } from '@/app/types';
 
-export default function Home() {
+import Header from '@/app/components/Header';
+import Navigation from '@/app/components/Navigation';
+import HeroBanner from '@/app/components/HeroBanner';
+import PackageCard from '@/app/components/PackageCard';
+import BundleCard from '@/app/components/BundleCard';
+import TrustBadges from '@/app/components/TrustBadges';
+import BeforeAfter from '@/app/components/BeforeAfter';
+import Footer from '@/app/components/Footer';
+import CustomDialog from '@/app/components/CustomDialog';
+
+const getPackageColors = (activeTab: keyof Services, index: number) => {
+  const colorMaps = {
+    comments: [
+      { bg: 'from-orange-400 to-orange-600', border: 'border-orange-500' },
+      { bg: 'from-orange-500 to-red-500', border: 'border-red-500' },
+      { bg: 'from-red-500 to-red-600', border: 'border-red-600' },
+      { bg: 'from-red-600 to-red-700', border: 'border-red-700' }
+    ],
+    views: [
+      { bg: 'from-teal-400 to-teal-600', border: 'border-teal-500' },
+      { bg: 'from-teal-500 to-blue-500', border: 'border-blue-500' },
+      { bg: 'from-blue-500 to-blue-600', border: 'border-blue-600' },
+      { bg: 'from-blue-600 to-indigo-600', border: 'border-indigo-600' }
+    ],
+    likes: [
+      { bg: 'from-pink-400 to-pink-600', border: 'border-pink-500' },
+      { bg: 'from-pink-500 to-pink-600', border: 'border-pink-600' },
+      { bg: 'from-pink-600 to-purple-600', border: 'border-purple-600' },
+      { bg: 'from-purple-600 to-purple-700', border: 'border-purple-700' }
+    ],
+    followers: [
+      { bg: 'from-blue-400 to-blue-500', border: 'border-blue-500' },
+      { bg: 'from-blue-500 to-blue-600', border: 'border-blue-600' },
+      { bg: 'from-blue-600 to-purple-600', border: 'border-purple-600' },
+      { bg: 'from-purple-600 to-purple-700', border: 'border-purple-700' }
+    ]
+  };
+  return colorMaps[activeTab as keyof typeof colorMaps]?.[index] || colorMaps.followers[index];
+};
+
+const getBundleColors = (index: number) => {
+  const colors = [
+    { bg: 'from-purple-400 to-purple-600', border: 'border-purple-500' },
+    { bg: 'from-purple-500 to-blue-500', border: 'border-blue-500' },
+    { bg: 'from-blue-500 to-blue-600', border: 'border-blue-600' },
+    { bg: 'from-blue-600 to-purple-700', border: 'border-purple-700' }
+  ];
+  return colors[index];
+};
+
+const GrowwMoreeeAgencyPage = () => {
+  const [activeTab, setActiveTab] = useState<keyof Services>('followers');
+  const currentService = services[activeTab];
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [purchaseDetails, setPurchaseDetails] = useState({ name: '', price: '' });
+
+  
+  const handlePurchase = (packageName: string, price: string) => {
+    setPurchaseDetails({ name: packageName, price: price });
+    setIsDialogOpen(true);
+  };
+
+  
+  const confirmPurchase = () => {
+    const { name, price } = purchaseDetails;
+    const message = `Hi ${CONTACT_INFO.agencyName}, I'm interested in the "${name}" package for ${price}. Please let me know how to proceed!`;
+
+   
+    const textArea = document.createElement('textarea');
+    textArea.value = message;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+     
+      document.execCommand('copy');
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+      
+      alert('Could not copy message automatically. Please manually type your request on Instagram.');
+    }
+    document.body.removeChild(textArea);
+
+    
+    window.open(CONTACT_INFO.instagramDirectLink, "_blank");
+    
+    
+    setIsDialogOpen(false);
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <Header />
+      <Navigation activeTab={activeTab} setActiveTab={setActiveTab} services={services} />
+      <HeroBanner service={currentService} />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+      <main>
+        {activeTab !== 'bundles' ? (
+          <div className="max-w-7xl mx-auto px-4 py-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              {(currentService as StandardService).packages.map((pkg, index) => (
+                <PackageCard
+                  key={pkg.id}
+                  pkg={pkg}
+                  colors={getPackageColors(activeTab, index)}
+                  serviceTitle={currentService.title}
+                  onPurchase={() => handlePurchase(`${pkg.amount} ${currentService.title.replace('Social Media ', '')}`, pkg.price)}
+                />
+              ))}
+            </div>
+            <TrustBadges />
+            {activeTab === 'followers' && <BeforeAfter />}
+            {(currentService as StandardService).saleText && (
+              <div className={`bg-gradient-to-r ${currentService.gradient} rounded-2xl p-6 sm:p-8 text-white text-center my-12`}>
+                <div className="text-2xl sm:text-3xl font-bold mb-2 flex items-center justify-center gap-2"><Zap className="w-6 h-6 sm:w-8 sm:h-8" /> Flash Sale!</div>
+                <p className="text-lg sm:text-xl">{(currentService as StandardService).saleText}</p>
+              </div>
+            )}
+            <div className="text-center my-12">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-gray-800">{currentService.heading}</h2>
+              <p className="text-lg sm:text-xl text-gray-600 mb-8">{currentService.description}</p>
+              <button onClick={() => handlePurchase(currentService.title, 'Custom Package')}
+                className={`bg-gradient-to-r ${currentService.gradient} text-white px-8 sm:px-12 py-3 sm:py-4 rounded-full text-lg sm:text-xl font-bold shadow-xl hover:scale-105 transition-transform`}>
+                {currentService.cta}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="max-w-7xl mx-auto px-4 py-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+              {(currentService as BundleService).packages.map((bundle, index) => (
+                <BundleCard key={bundle.id} bundle={bundle} colors={getBundleColors(index)} onPurchase={() => handlePurchase(bundle.name, bundle.price)} />
+              ))}
+            </div>
+            <div className="my-12">
+              <h3 className="text-2xl sm:text-3xl font-bold text-center mb-8 text-gray-800">🎯 Why Choose Bundle Packages?</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {(currentService as BundleService).benefits.map((benefit, idx) => {
+                  const BenefitIcon = benefit.icon;
+                  return (
+                    <div key={idx} className="bg-white rounded-2xl p-6 shadow-lg text-center">
+                      <div className="inline-block p-3 bg-gradient-to-br from-orange-400 to-pink-500 rounded-full mb-4"><BenefitIcon className="w-8 h-8 text-white" /></div>
+                      <h4 className="text-xl font-bold mb-2 text-gray-800">{benefit.title}</h4>
+                      <p className="text-gray-600">{benefit.description}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <TrustBadges />
+            <div className="text-center mt-12">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-gray-800">{currentService.heading}</h2>
+              <p className="text-lg sm:text-xl text-gray-600 mb-8">{currentService.description}</p>
+              <button onClick={() => handlePurchase('Bundle Package', 'Custom Bundle')}
+                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 sm:px-12 py-3 sm:py-4 rounded-full text-lg sm:text-xl font-bold shadow-xl hover:scale-105 transition-transform">
+                {currentService.cta}
+              </button>
+            </div>
+          </div>
+        )}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+      <Footer />
+      
+      
+      <CustomDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onConfirm={confirmPurchase}
+        title="Confirm Your Selection"
+        buttonText="Copy Message & Go to Instagram"
+      >
+        <p>A message for your selected package will be copied.</p>
+        <p>You will be redirected to Instagram to complete your purchase. Just paste the message in the chat!</p>
+      </CustomDialog>
     </div>
   );
-}
+};
+
+export default GrowwMoreeeAgencyPage;
